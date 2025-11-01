@@ -27,6 +27,6 @@ int solver(std::shared_ptr<backend_interface::Tester> tester, bool preempt) {
   // motor2->send_data(-50);
   // std::this_thread::sleep_for(std::chrono::milliseconds(250));
   //
-  const auto controller = std::make_unique<CameraController>(tester.get(), preempt);
+  const auto controller = std::make_unique<CameraController>(tester, preempt);
   return 0;
 }

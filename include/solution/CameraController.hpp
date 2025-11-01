@@ -6,7 +6,7 @@
 
 class CameraController {
 public:
-    CameraController(backend_interface::Tester*, bool preempt_mode);
+    CameraController(std::shared_ptr<backend_interface::Tester> tester, bool preempt_mode);
     ~CameraController() = default;
 private:
     std::shared_ptr<backend_interface::Component<signed char, unsigned short>> motor1_;
