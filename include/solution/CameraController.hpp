@@ -6,13 +6,26 @@
 
 class CameraController {
 public:
-    CameraController(std::shared_ptr<backend_interface::Tester> tester, bool preempt_mode);
-    ~CameraController() = default;
+  CameraController(std::shared_ptr<backend_interface::Tester> tester, bool preempt_mode);
+  ~CameraController() = default;
+
 private:
-    std::shared_ptr<backend_interface::Component<signed char, unsigned short>> motor1_;
-    std::shared_ptr<backend_interface::Component<signed char, unsigned short>> motor2_;
-    std::shared_ptr<backend_interface::Component<backend_interface::Tester::Impossible, Point>> commands_;
-    bool preempt_mode_;
-    const unsigned int ENCODER_SCOPE;
+  std::shared_ptr<backend_interface::Component<signed char, unsigned short> > motor1_;
+  std::shared_ptr<backend_interface::Component<signed char, unsigned short> > motor2_;
+  std::shared_ptr<backend_interface::Component<backend_interface::Tester::Impossible, Point> > commands_;
+  bool preempt_mode_;
+  const unsigned int ENCODER_SCOPE;
+  bool onTheWayToTarget_;
+  double targetEncoderVal1_{0.0};
+  double targetEncoderVal2_{0.0};
+
+  // Callbacks
+  void onMotor1Data(const uint16_t &position);
+  void onMotor2Data(const uint16_t &position);
+  void onCommandReceived(const Point &target);
+
+  // Moving utils
+  void convertCoordinatesForEncoder(const Point &target);
+  void updateMotorRegulator(const Point &currPosition, int motorId);
 };
 
