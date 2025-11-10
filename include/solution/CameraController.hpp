@@ -18,6 +18,12 @@ private:
   bool onTheWayToTarget_;
   double targetEncoderVal1_{0.0};
   double targetEncoderVal2_{0.0};
+  bool motor1InPosition_{false};
+  bool motor2InPosition_{false};
+
+  // Proportional gain for motors
+  double Kp1_{0.0};
+  double Kp2_{0.0};
 
   // Callbacks
   void onMotor1Data(const uint16_t &position);
@@ -26,6 +32,6 @@ private:
 
   // Moving utils
   void convertCoordinatesForEncoder(const Point &target);
-  void updateMotorRegulator(const Point &currPosition, int motorId);
+  void updateMotorRegulator(const uint16_t &currPosition, int motorId);
 };
 
