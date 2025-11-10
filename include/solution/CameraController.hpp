@@ -22,8 +22,8 @@ private:
   bool motor2InPosition_{false};
 
   // Proportional gain for motors
-  double Kp1_{0.0};
-  double Kp2_{0.0};
+  double Kp1_{1.5};
+  double Kp2_{1.5};
 
   // Callbacks
   void onMotor1Data(const uint16_t &position);
