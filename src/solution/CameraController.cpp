@@ -4,7 +4,7 @@
 #include <iomanip>
 
 constexpr int ENCODER_RESOLUTION = 4096;
-constexpr double ENCODER_ERROR_MARGIN = 5.0;
+constexpr double ENCODER_ERROR_MARGIN = 25.0;
 
 CameraController::CameraController(std::shared_ptr<backend_interface::Tester> tester, const bool preempt_mode)
   : motor1_(tester->get_motor_1()),
@@ -25,11 +25,6 @@ CameraController::CameraController(std::shared_ptr<backend_interface::Tester> te
   commands_->add_data_callback([this](const Point& target) {
     this->onCommandReceived(target);
   });
-  //
-  // motor1_->add_data_callback([this](auto && PH1) { onMotor1Data(std::forward<decltype(PH1)>(PH1)); });
-  // motor2_->add_data_callback([this](auto && PH1) { onMotor2Data(std::forward<decltype(PH1)>(PH1)); });
-  // commands_->add_data_callback([this](auto && PH1) { onCommandReceived(std::forward<decltype(PH1)>(PH1)); });
-
 }
 
 void CameraController::onCommandReceived(const Point &target) {
