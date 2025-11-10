@@ -5,6 +5,7 @@
 
 constexpr int ENCODER_RESOLUTION = 4096;
 constexpr double ENCODER_ERROR_MARGIN = 25.0;
+constexpr double MIN_FRICTION_OVERCOME_SIGNAL = 60.0;
 
 CameraController::CameraController(std::shared_ptr<backend_interface::Tester> tester, const bool preempt_mode)
   : motor1_(tester->get_motor_1()),
@@ -97,7 +98,18 @@ void CameraController::updateMotorRegulator(const uint16_t &currPosition, int mo
   // 7. Regulator P
   double signal = Kp * uchyb;
 
-  // 8. Nasycenie (Clamp) - ogranicz sygnał do [-128, 127]
+  // Hack for controller tuning
+  if (uchyb > ENCODER_ERROR_MARGIN) {
+    if (signal < MIN_FRICTION_OVERCOME_SIGNAL) {
+      signal = MIN_FRICTION_OVERCOME_SIGNAL;
+    }
+  }
+  else if (uchyb < -ENCODER_ERROR_MARGIN) {
+    if (signal > -MIN_FRICTION_OVERCOME_SIGNAL) {
+      signal = -MIN_FRICTION_OVERCOME_SIGNAL;
+    }
+  }
+
   signal = std::max(-128.0, std::min(127.0, signal));
 
   // Debug logs
