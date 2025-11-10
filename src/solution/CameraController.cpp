@@ -13,9 +13,29 @@ CameraController::CameraController(std::shared_ptr<backend_interface::Tester> te
     preempt_mode_(preempt_mode),
     ENCODER_SCOPE(ENCODER_RESOLUTION),
     onTheWayToTarget_(false) {
+
+  motor1_->add_data_callback([this](const uint16_t &position) {
+    this->onMotor1Data(position);
+  });
+
+  motor2_->add_data_callback([this](const uint16_t &position) {
+    this->onMotor2Data(position);
+  });
+
+  commands_->add_data_callback([this](const Point& target) {
+    this->onCommandReceived(target);
+  });
+  //
+  // motor1_->add_data_callback([this](auto && PH1) { onMotor1Data(std::forward<decltype(PH1)>(PH1)); });
+  // motor2_->add_data_callback([this](auto && PH1) { onMotor2Data(std::forward<decltype(PH1)>(PH1)); });
+  // commands_->add_data_callback([this](auto && PH1) { onCommandReceived(std::forward<decltype(PH1)>(PH1)); });
+
 }
 
 void CameraController::onCommandReceived(const Point &target) {
+  // Debug log
+  std::cout << "!!! OTRZYMANO CEL: (" << target.x << ", " << target.y << ", " << target.z << ") !!!" << std::endl;
+
   // Accept new target and abandon last one
   if (preempt_mode_) {
     convertCoordinatesForEncoder(target);
@@ -45,6 +65,7 @@ void CameraController::updateMotorRegulator(const uint16_t &currPosition, int mo
   // No active target
   if (!onTheWayToTarget_) {
     (motorId == 1 ? motor1_ : motor2_)->send_data(0);
+    return;
   }
 
   const double target = (motorId == 1) ? targetEncoderVal1_ : targetEncoderVal2_;
@@ -85,7 +106,7 @@ void CameraController::updateMotorRegulator(const uint16_t &currPosition, int mo
   signal = std::max(-128.0, std::min(127.0, signal));
 
   // Debug logs
-  if (motorId == 1) { 
+  if (motorId == 1) {
     std::cout << std::fixed << std::setprecision(2)
               << "[M1] Cel: " << std::setw(8) << target
               << " | Poz: " << std::setw(8) << static_cast<double>(currPosition)
